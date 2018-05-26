@@ -16,7 +16,7 @@ Things needs to be done
 It's a folder to store the data
 
 ### handlers
-It's a package to manage resources (including unit test)
+It's a package to manage resources including unit test
 
 ### models
 It's a package for request and response payload
