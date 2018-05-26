@@ -98,7 +98,7 @@ func TestTodoHandler_HandleAddTask_Duplicate(t *testing.T) {
 	mockRepo.AddTask(todoID, task)
 
 	url := fmt.Sprintf("/v1/todo/%s/tasks", todoID)
-	// set request payload to the same task to simulate StatusConfict 409
+	// set request payload to the same task (taskID is identical) to simulate StatusConfict 409
 	bytes, _ := json.Marshal(task)
 	request, _ := http.NewRequest("POST", url, strings.NewReader(string(bytes)))
 	params := map[string]string{
