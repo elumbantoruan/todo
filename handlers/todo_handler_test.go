@@ -40,6 +40,8 @@ func TestTodoHandler_HandleAddTodo_Duplicate(t *testing.T) {
 	mockRepo.AddTodo(newTodo)
 
 	url := "/v1/todo"
+	// todo2 uses the same todoID as previous todo instance
+	// so this will test for http.StatusConflict
 	todo2 := newTodoID(todoID)
 	bytes, _ := json.Marshal(todo2)
 	request, _ := http.NewRequest("POST", url, strings.NewReader(string(bytes)))
@@ -49,36 +51,6 @@ func TestTodoHandler_HandleAddTodo_Duplicate(t *testing.T) {
 	h.HandleAddTodo(responseRecorder, request)
 
 	assert.Equal(t, http.StatusConflict, responseRecorder.Code)
-}
-
-func newTodo() models.Todo {
-	return newTodoID(uuid.New())
-}
-
-func newTodoID(todoID uuid.UUID) models.Todo {
-	taskID := uuid.New()
-	return models.Todo{
-		ID:          todoID,
-		Name:        fmt.Sprintf("TODO:%v", todoID),
-		Description: fmt.Sprintf("DESCRIPTION:%v", todoID),
-		Tasks: []models.Task{
-			{
-				ID:   taskID,
-				Name: fmt.Sprintf("TASK%v", taskID),
-			},
-		},
-	}
-}
-
-func newTask() models.Task {
-	return newTaskID(uuid.New())
-}
-
-func newTaskID(taskID uuid.UUID) models.Task {
-	return models.Task{
-		ID:   taskID,
-		Name: fmt.Sprintf("TASK:%v", taskID),
-	}
 }
 
 func TestTodoHandler_HandleAddTask(t *testing.T) {
@@ -178,5 +150,35 @@ func TestTodoHandler_HandleGetTodoList(t *testing.T) {
 	assert.Equal(t, limit, len(todoList))
 	for i := 0; i < limit; i++ {
 		assert.Equal(t, listID[skip+i], todoList[i].ID)
+	}
+}
+
+func newTodo() models.Todo {
+	return newTodoID(uuid.New())
+}
+
+func newTodoID(todoID uuid.UUID) models.Todo {
+	taskID := uuid.New()
+	return models.Todo{
+		ID:          todoID,
+		Name:        fmt.Sprintf("TODO:%v", todoID),
+		Description: fmt.Sprintf("DESCRIPTION:%v", todoID),
+		Tasks: []models.Task{
+			{
+				ID:   taskID,
+				Name: fmt.Sprintf("TASK%v", taskID),
+			},
+		},
+	}
+}
+
+func newTask() models.Task {
+	return newTaskID(uuid.New())
+}
+
+func newTaskID(taskID uuid.UUID) models.Task {
+	return models.Task{
+		ID:   taskID,
+		Name: fmt.Sprintf("TASK:%v", taskID),
 	}
 }
